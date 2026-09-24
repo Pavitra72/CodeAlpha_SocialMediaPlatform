@@ -9,21 +9,40 @@
 <body>
 
     <header>
-        <h1>My Social Media Platform</h1>
+        <div class="header">
+    <h1> My Social Media Platform </h1>
+    <p>Connect • Share • Follow • Enjoy</p>
+</div>
 
-        {% if user.is_authenticated %}
-            <p>Welcome, <strong>
-                <a href="{% url 'profile' user.username %}">
-                    {{ user.username }}
-                </a>
-            </strong>!</p>
+        <div class="user-bar">
 
-            <a href="{% url 'logout' %}">Logout</a>
-        {% else %}
-            <a href="{% url 'login' %}">Login</a>
-            |
-            <a href="{% url 'register' %}">Register</a>
-        {% endif %}
+    {% if user.is_authenticated %}
+
+        <span>
+            👋 Welcome,
+            <a href="{% url 'profile' user.username %}">
+                {{ user.username }}
+            </a>
+        </span>
+
+        <a class="logout-btn" href="{% url 'logout' %}">
+            🚪 Logout
+        </a>
+
+    {% else %}
+
+        <a class="login-btn" href="{% url 'login' %}">
+            🔐 Login
+        </a>
+
+        <a class="register-btn" href="{% url 'register' %}">
+            ✨ Register
+        </a>
+
+    {% endif %}
+
+</div>
+
     </header>
 
     <hr>
@@ -32,7 +51,7 @@
 
         <h2>Create a Post</h2>
 
-        <form method="POST">
+        <form method="POST" class="create-post-form">
             {% csrf_token %}
 
             <textarea
@@ -61,7 +80,7 @@
     {% endif %}
 
 
-    <h2>Posts</h2>
+    <h2 class="posts-title">Latest Posts</h2>
 
     {% for post in posts %}
 
