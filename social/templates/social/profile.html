@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ profile_user.username }} - Profile</title>
+
+    {% load static %}
+
+    <link rel="stylesheet" href="{% static 'social/style.css' %}">
+</head>
+
+<body>
+
+    <h1>{{ profile_user.username }}</h1>
+
+    <p>
+        Followers: {{ followers_count }}
+        |
+        Following: {{ following_count }}
+    </p>
+
+    <hr>
+
+    <h2>{{ profile_user.username }}'s Posts</h2>
+
+    {% for post in posts %}
+
+        <div>
+            <p>{{ post.content }}</p>
+
+            <small>
+                {{ post.created_at }}
+            </small>
+
+            <p>
+                ❤️ Likes: {{ post.likes.count }}
+            </p>
+        </div>
+
+        <hr>
+
+    {% empty %}
+
+        <p>No posts yet.</p>
+
+    {% endfor %}
+
+    <br>
+
+    <a href="{% url 'home' %}">← Back to Home</a>
+
+</body>
+</html>

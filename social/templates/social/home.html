@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Social Media Platform</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'social/style.css' %}">
+</head>
+
+<body>
+
+    <header>
+        <h1>My Social Media Platform</h1>
+
+        {% if user.is_authenticated %}
+            <p>Welcome, <strong>
+                <a href="{% url 'profile' user.username %}">
+                    {{ user.username }}
+                </a>
+            </strong>!</p>
+
+            <a href="{% url 'logout' %}">Logout</a>
+        {% else %}
+            <a href="{% url 'login' %}">Login</a>
+            |
+            <a href="{% url 'register' %}">Register</a>
+        {% endif %}
+    </header>
+
+    <hr>
+
+    {% if user.is_authenticated %}
+
+        <h2>Create a Post</h2>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <textarea
+                name="content"
+                rows="4"
+                cols="50"
+                placeholder="What's on your mind?"
+                required></textarea>
+
+            <br><br>
+
+            <button type="submit">Post</button>
+        </form>
+
+        <hr>
+
+    {% else %}
+
+        <p>
+            <a href="{% url 'login' %}">Login</a>
+            to create a post.
+        </p>
+
+        <hr>
+
+    {% endif %}
+
+
+    <h2>Posts</h2>
+
+    {% for post in posts %}
+
+        <div>
+            <h3>
+                <a href="{% url 'profile' post.author.username %}">
+                    {{ post.author.username }}
+                </a>
+            </h3>
+            {% if user.is_authenticated and user.id != post.author.id %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <input
+            type="hidden"
+            name="follow_user_id"
+            value="{{ post.author.id }}"
+        >
+
+        {% if post.author.id in following_ids %}
+
+            <button type="submit">
+                👥 Unfollow
+            </button>
+
+        {% else %}
+
+            <button type="submit">
+                👥 Follow
+            </button>
+
+        {% endif %}
+
+    </form>
+
+{% endif %}
+
+            <p>{{ post.content }}</p>
+
+            <small>{{ post.created_at }}</small>
+            {% if user.is_authenticated %}
+    <form method="POST">
+        {% csrf_token %}
+
+        <input
+            type="hidden"
+            name="like_post_id"
+            value="{{ post.id }}"
+        >
+
+        <button type="submit">
+            ❤️ Like
+        </button>
+    </form>
+{% endif %}
+
+<p>
+    Likes: {{ post.likes.count }}
+</p>
+            <h4>Comments</h4>
+
+{% for comment in post.comments.all %}
+    <p>
+        <strong>{{ comment.author.username }}</strong>:
+        {{ comment.content }}
+    </p>
+{% empty %}
+    <p>No comments yet.</p>
+{% endfor %}
+
+{% if user.is_authenticated %}
+    <form method="POST">
+        {% csrf_token %}
+
+        <input type="hidden" name="post_id" value="{{ post.id }}">
+
+        <input
+            type="text"
+            name="comment"
+            placeholder="Write a comment..."
+            required
+        >
+
+        <button type="submit">Comment</button>
+    </form>
+{% endif %}
+        </div>
+
+        <hr>
+
+    {% empty %}
+
+        <p>No posts yet.</p>
+
+    {% endfor %}
+
+</body>
+</html>
